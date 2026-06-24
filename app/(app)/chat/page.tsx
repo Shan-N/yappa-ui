@@ -67,12 +67,13 @@ export default function ChatPage() {
 
     return messages.filter((msg) => {
       if (activeChannel.type === "dm") {
+        // Match any DM where both the current user and the other user
+        // appear in the senderId/channelId pair (in any direction)
+        const ids = [msg.senderId, msg.channelId];
         return (
           msg.channelType === "DM" &&
-          ((msg.senderId === user.user_id &&
-            msg.channelId === activeChannel.id) ||
-            (msg.senderId === activeChannel.id &&
-              msg.channelId === user.user_id))
+          ids.includes(user.user_id) &&
+          ids.includes(activeChannel.id)
         );
       }
       return (
