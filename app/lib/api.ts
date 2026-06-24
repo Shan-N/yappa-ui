@@ -22,7 +22,7 @@ class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://yappa.perceptionlabs.tech";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 async function request<T>(
   endpoint: string,
