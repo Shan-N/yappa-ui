@@ -2,7 +2,9 @@
 
 import { useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { useAuth } from "@/app/components/auth-provider";
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -14,6 +16,14 @@ export default function LandingPage() {
   const navRef = useRef<HTMLElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
