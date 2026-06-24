@@ -9,6 +9,7 @@ import type {
   User,
   TenantInfo,
   APIError,
+  ChatMessageFromAPI,
 } from "./types";
 
 class ApiError extends Error {
@@ -109,6 +110,21 @@ export async function getTenantInfo(
   return request<TenantInfo>(`/api/tenants/${tenantId}`, {
     headers: authHeader(token),
   });
+}
+
+export async function getChannelHistory(
+  tenantId: string,
+  channelType: "DM" | "GROUP",
+  channelId: string,
+  token: string,
+  limit: number = 50
+): Promise<ChatMessageFromAPI[]> {
+  return request<ChatMessageFromAPI[]>(
+    `/api/history/${tenantId}/${channelType}/${encodeURIComponent(channelId)}?limit=${limit}`,
+    {
+      headers: authHeader(token),
+    }
+  );
 }
 
 /**

@@ -85,10 +85,16 @@ export default function AppLayout({
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => router.push("/docs")}
+              onClick={() => router.push("/dashboard")}
               className="text-xs text-zinc-500 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
             >
-              Docs
+              API Config
+            </button>
+            <button
+              onClick={() => router.push("/chat")}
+              className="text-xs text-zinc-500 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
+            >
+              Chat
             </button>
             <span className="text-xs text-zinc-500">
               {user?.display_name || user?.user_id}

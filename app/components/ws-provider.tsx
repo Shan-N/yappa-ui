@@ -10,7 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { RealtimeWS } from "@/app/lib/ws-client";
-import type { ChatMessage, WSIncomingMessage } from "@/app/lib/types";
+import { getChannelHistory } from "@/app/lib/api";
+import type { ChatMessage, WSIncomingMessage, ChatMessageFromAPI } from "@/app/lib/types";
 import { useAuth } from "./auth-provider";
 
 interface WSContextType {
@@ -23,6 +24,7 @@ interface WSContextType {
   createGroup: (groupId: string) => void;
   deleteGroup: (groupId: string) => void;
   clearMessages: () => void;
+  loadHistory: (channelType: "DM" | "GROUP", channelId: string) => Promise<void>;
 }
 
 const WSContext = createContext<WSContextType | null>(null);
@@ -33,16 +35,16 @@ export function useWS(): WSContextType {
   return ctx;
 }
 
-function toMessage(msg: WSIncomingMessage): ChatMessage {
+function toMessage(msg: WSIncomingMessage | ChatMessageFromAPI): ChatMessage {
   return {
     id: msg.message_id,
-    channelType: msg.channel_type,
-    channelId: msg.channel_id,
-    senderId: msg.sender_id,
-    text: msg.payload.text,
+    channelType: (msg as WSIncomingMessage).channel_type || (msg as ChatMessageFromAPI).channel_type as "DM" | "GROUP",
+    channelId: (msg as WSIncomingMessage).channel_id || (msg as ChatMessageFromAPI).channel_id,
+    senderId: (msg as WSIncomingMessage).sender_id || (msg as ChatMessageFromAPI).sender_id,
+    text: (msg as WSIncomingMessage).payload?.text || (msg as ChatMessageFromAPI).text,
     timestamp: msg.timestamp,
-    conversationId: msg.conversation_id,
-    type: msg.type,
+    conversationId: (msg as WSIncomingMessage).conversation_id || (msg as ChatMessageFromAPI).conversation_id,
+    type: (msg as WSIncomingMessage).type || "chat",
   };
 }
 
@@ -74,7 +76,10 @@ export function WSProvider({ children }: { children: ReactNode }) {
     ws.on("disconnected", () => setIsConnected(false));
     ws.on("message", (data) => {
       const msg = data as WSIncomingMessage;
-      setMessages((prev) => [...prev, toMessage(msg)]);
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === msg.message_id)) return prev;
+        return [...prev, toMessage(msg)];
+      });
     });
 
     ws.connect();
@@ -85,7 +90,6 @@ export function WSProvider({ children }: { children: ReactNode }) {
     };
   }, [isAuthenticated, accessToken, user]);
 
-  // Update token when it refreshes
   useEffect(() => {
     if (wsRef.current && accessToken) {
       wsRef.current.updateToken(accessToken);
@@ -120,6 +124,24 @@ export function WSProvider({ children }: { children: ReactNode }) {
     setMessages([]);
   }, []);
 
+  const loadHistory = useCallback(async (channelType: "DM" | "GROUP", channelId: string) => {
+    if (!accessToken || !user) return;
+    try {
+      const history = await getChannelHistory(user.tenant_id, channelType, channelId, accessToken);
+      setMessages((prev) => {
+        const merged = [...prev];
+        for (const msg of history) {
+          if (!merged.some((m) => m.id === msg.message_id)) {
+            merged.push(toMessage(msg));
+          }
+        }
+        return merged.sort((a, b) => a.timestamp - b.timestamp);
+      });
+    } catch (e) {
+      console.error("Failed to load history:", e);
+    }
+  }, [accessToken, user]);
+
   return (
     <WSContext.Provider
       value={{
@@ -132,6 +154,7 @@ export function WSProvider({ children }: { children: ReactNode }) {
         createGroup,
         deleteGroup,
         clearMessages,
+        loadHistory,
       }}
     >
       {children}

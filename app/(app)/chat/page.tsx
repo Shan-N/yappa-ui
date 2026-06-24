@@ -13,7 +13,7 @@ import type { TenantInfo, ChatMessage } from "@/app/lib/types";
 
 export default function ChatPage() {
   const { user, accessToken } = useAuth();
-  const { messages, sendDM, sendGroupMessage, joinGroup, createGroup, isConnected } =
+  const { messages, sendDM, sendGroupMessage, joinGroup, createGroup, isConnected, loadHistory } =
     useWS();
 
   const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
@@ -103,10 +103,12 @@ export default function ChatPage() {
 
   function handleSelectGroup(groupId: string) {
     setActiveChannel({ type: "group", id: groupId });
+    loadHistory("GROUP", groupId);
   }
 
   function handleSelectDM(userId: string) {
     setActiveChannel({ type: "dm", id: userId });
+    loadHistory("DM", userId);
   }
 
   function getChannelDisplayName(): string {

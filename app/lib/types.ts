@@ -121,6 +121,16 @@ export interface ChatMessage {
   type: string;
 }
 
+export interface ChatMessageFromAPI {
+  message_id: string;
+  channel_type: string;
+  channel_id: string;
+  sender_id: string;
+  text: string;
+  timestamp: number;
+  conversation_id: string;
+}
+
 export interface AuthState {
   accessToken: string | null;
   user: User | null;
