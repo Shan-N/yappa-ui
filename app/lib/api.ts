@@ -114,7 +114,7 @@ export async function getTenantInfo(
 
 export async function getChannelHistory(
   tenantId: string,
-  channelType: "DM" | "GROUP",
+  channelType: "Dm" | "Group",
   channelId: string,
   token: string,
   limit: number = 50
