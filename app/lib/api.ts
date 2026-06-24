@@ -120,7 +120,7 @@ export async function getChannelHistory(
   limit: number = 50
 ): Promise<ChatMessageFromAPI[]> {
   return request<ChatMessageFromAPI[]>(
-    `/api/history/${tenantId}/${channelType}/${encodeURIComponent(channelId)}?limit=${limit}`,
+    `/api/history/${tenantId}/${channelType === "DM" ? "Dm" : "Group"}/${encodeURIComponent(channelId)}?limit=${limit}`,
     {
       headers: authHeader(token),
     }
