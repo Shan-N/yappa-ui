@@ -94,7 +94,7 @@ export interface WSGroupAction {
 }
 
 export interface WSIncomingMessage {
-  type: "chat" | "group_join" | "group_leave" | "group_message";
+  type: "chat" | "group_join" | "group_leave" | "group_message" | "group_created";
   message_id: string;
   tenant_id: string;
   channel_type: WSChannelType;
