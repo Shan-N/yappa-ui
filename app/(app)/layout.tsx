@@ -65,7 +65,7 @@ export default function AppLayout({
     <WSProvider>
       <div ref={layoutRef} className="h-screen flex flex-col bg-surface-0">
         {/* Top bar */}
-        <header className="h-13 flex items-center justify-between px-3 sm:px-5 border-b border-border-subtle bg-surface-50/80 backdrop-blur-md shrink-0 relative">
+        <header className="h-13 flex items-center justify-between px-3 sm:px-5 border-b border-border-subtle bg-surface-50/80 backdrop-blur-md shrink-0 relative z-50">
           <div className="flex items-center gap-2.5">
             <div className="h-7 w-7 rounded-lg gradient-brand flex items-center justify-center">
               <svg

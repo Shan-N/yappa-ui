@@ -150,7 +150,7 @@ export default function LandingPage() {
   const headingWords = ["Real-time", "chat", "for", "modern", "teams."];
 
   return (
-    <div ref={heroRef} className="relative min-h-screen overflow-hidden">
+    <div ref={heroRef} className="relative min-h-screen overflow-x-hidden">
       {/* ── Grid Background ── */}
       <div ref={gridRef} className="fixed inset-0 grid-bg opacity-30" />
 
@@ -249,7 +249,7 @@ export default function LandingPage() {
       {/* Mobile nav dropdown */}
       {mobileNavOpen && (
         <div className="relative z-20 sm:hidden mx-4 mb-2 glass rounded-xl animate-fadeIn">
-          <div className="p-2 space-y-1">
+          <div className="p-2 z-20 space-y-1">
             <Link
               href="/docs"
               onClick={() => setMobileNavOpen(false)}

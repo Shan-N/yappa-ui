@@ -60,6 +60,7 @@ export default function ChatPage() {
           stagger: 0.1,
           duration: 0.5,
           ease: "power2.out",
+          clearProps: "all",
         }
       );
     }
@@ -136,14 +137,14 @@ export default function ChatPage() {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 top-[3.25rem] bg-black/50 backdrop-blur-sm z-30 md:hidden"
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar — hidden on mobile unless toggled */}
       <div
-        className={`mobile-sidebar chat-panel fixed top-[3.25rem] bottom-0 left-0 z-40 w-72 transform transition-transform duration-300 ease-out md:relative md:top-auto md:bottom-auto md:translate-x-0 md:z-auto ${
+        className={`mobile-sidebar absolute top-0 bottom-0 left-0 z-40 w-72 transform transition-transform duration-300 ease-out md:relative md:top-auto md:bottom-auto md:translate-x-0 md:z-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
