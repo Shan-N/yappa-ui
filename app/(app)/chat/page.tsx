@@ -13,7 +13,7 @@ import type { TenantInfo, ChatMessage } from "@/app/lib/types";
 
 export default function ChatPage() {
   const { user, accessToken } = useAuth();
-  const { messages, sendDM, sendGroupMessage, joinGroup, createGroup, isConnected, loadHistory } =
+  const { messages, groups, sendDM, sendGroupMessage, joinGroup, createGroup, isConnected, loadHistory } =
     useWS();
 
   const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
@@ -21,7 +21,6 @@ export default function ChatPage() {
     type: "dm" | "group";
     id: string;
   } | null>(null);
-  const [groups, setGroups] = useState<string[]>(["general"]);
   const [showInvite, setShowInvite] = useState(false);
 
   const mainRef = useRef<HTMLDivElement>(null);
@@ -97,7 +96,6 @@ export default function ChatPage() {
   function handleCreateGroup(groupId: string) {
     createGroup(groupId);
     joinGroup(groupId);
-    setGroups((prev) => (prev.includes(groupId) ? prev : [...prev, groupId]));
     setActiveChannel({ type: "group", id: groupId });
   }
 

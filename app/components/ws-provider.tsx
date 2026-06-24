@@ -17,6 +17,7 @@ import { useAuth } from "./auth-provider";
 interface WSContextType {
   isConnected: boolean;
   messages: ChatMessage[];
+  groups: string[];
   sendDM: (recipientId: string, text: string) => void;
   sendGroupMessage: (groupId: string, text: string) => void;
   joinGroup: (groupId: string) => void;
@@ -52,6 +53,7 @@ export function WSProvider({ children }: { children: ReactNode }) {
   const { accessToken, user, isAuthenticated } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [groups, setGroups] = useState<string[]>(["general"]);
   const wsRef = useRef<RealtimeWS | null>(null);
 
   useEffect(() => {
@@ -72,10 +74,24 @@ export function WSProvider({ children }: { children: ReactNode }) {
       userId: user.user_id,
     });
 
-    ws.on("connected", () => setIsConnected(true));
+    ws.on("connected", () => {
+      setIsConnected(true);
+      // Auto-join general on connect
+      ws.joinGroup("general");
+    });
     ws.on("disconnected", () => setIsConnected(false));
     ws.on("message", (data) => {
       const msg = data as WSIncomingMessage;
+      
+      // Handle group_created events
+      if (msg.type === "group_created" || msg.type === "group_join") {
+        const groupId = msg.channel_id;
+        setGroups((prev) => {
+          if (prev.includes(groupId)) return prev;
+          return [...prev, groupId];
+        });
+      }
+      
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.message_id)) return prev;
         return [...prev, toMessage(msg)];
@@ -83,6 +99,8 @@ export function WSProvider({ children }: { children: ReactNode }) {
     });
 
     ws.connect();
+    // Auto-join general group
+    ws.joinGroup("general");
     wsRef.current = ws;
 
     return () => {
@@ -147,6 +165,7 @@ export function WSProvider({ children }: { children: ReactNode }) {
       value={{
         isConnected,
         messages,
+        groups,
         sendDM,
         sendGroupMessage,
         joinGroup,
