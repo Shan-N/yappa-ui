@@ -153,6 +153,7 @@ export function WSProvider({ children }: { children: ReactNode }) {
             merged.push(toMessage(msg));
           }
         }
+        console.log(merged);
         return merged.sort((a, b) => a.timestamp - b.timestamp);
       });
     } catch (e) {
