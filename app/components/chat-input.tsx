@@ -42,9 +42,9 @@ export default function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border-t border-border-subtle"
+      className="p-2.5 sm:p-4 border-t border-border-subtle"
     >
-      <div className="flex items-end gap-3 bg-surface-200 border border-border-default rounded-2xl px-4 py-3 focus-within:border-white/50 transition-colors">
+      <div className="flex items-end gap-2 sm:gap-3 bg-surface-200 border border-border-default rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 focus-within:border-white/50 transition-colors">
         <textarea
           ref={textareaRef}
           value={text}
@@ -74,7 +74,7 @@ export default function ChatInput({
           </svg>
         </button>
       </div>
-      <p className="text-[11px] text-zinc-600 mt-2 px-1">
+      <p className="hidden sm:block text-[11px] text-zinc-600 mt-2 px-1">
         Press Enter to send, Shift+Enter for new line
       </p>
     </form>

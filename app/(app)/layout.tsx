@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useAuth } from "@/app/components/auth-provider";
@@ -14,6 +14,7 @@ export default function AppLayout({
   const { isAuthenticated, isLoading, logout, user } = useAuth();
   const router = useRouter();
   const layoutRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -64,7 +65,7 @@ export default function AppLayout({
     <WSProvider>
       <div ref={layoutRef} className="h-screen flex flex-col bg-surface-0">
         {/* Top bar */}
-        <header className="h-13 flex items-center justify-between px-5 border-b border-border-subtle bg-surface-50/80 backdrop-blur-md shrink-0">
+        <header className="h-13 flex items-center justify-between px-3 sm:px-5 border-b border-border-subtle bg-surface-50/80 backdrop-blur-md shrink-0 relative">
           <div className="flex items-center gap-2.5">
             <div className="h-7 w-7 rounded-lg gradient-brand flex items-center justify-center">
               <svg
@@ -83,7 +84,8 @@ export default function AppLayout({
             <span className="text-sm font-bold tracking-tight">Yappa</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Desktop nav */}
+          <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={() => router.push("/dashboard")}
               className="text-xs text-zinc-500 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
@@ -109,6 +111,53 @@ export default function AppLayout({
               Sign out
             </button>
           </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="sm:hidden p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              {mobileMenuOpen ? (
+                <path d="M18 6L6 18M6 6l12 12" />
+              ) : (
+                <>
+                  <line x1="4" y1="8" x2="20" y2="8" />
+                  <line x1="4" y1="16" x2="20" y2="16" />
+                </>
+              )}
+            </svg>
+          </button>
+
+          {/* Mobile dropdown */}
+          {mobileMenuOpen && (
+            <div className="absolute top-full right-0 left-0 bg-surface-100 border-b border-border-subtle shadow-xl z-50 sm:hidden animate-fadeIn">
+              <div className="p-3 space-y-1">
+                <div className="px-3 py-2 text-xs text-zinc-500 truncate">
+                  {user?.display_name || user?.user_id}
+                </div>
+                <button
+                  onClick={() => { router.push("/chat"); setMobileMenuOpen(false); }}
+                  className="w-full text-left text-sm text-zinc-300 hover:text-white px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                >
+                  Chat
+                </button>
+                <button
+                  onClick={() => { router.push("/dashboard"); setMobileMenuOpen(false); }}
+                  className="w-full text-left text-sm text-zinc-300 hover:text-white px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                >
+                  API Config
+                </button>
+                <button
+                  onClick={() => { logout(); router.push("/"); setMobileMenuOpen(false); }}
+                  className="w-full text-left text-sm text-zinc-400 hover:text-white px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Main content */}

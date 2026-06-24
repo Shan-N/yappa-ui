@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./components/auth-provider";
@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   title: "Yappa — Real-time Team Chat",
   description:
     "Secure, real-time messaging for teams. Create your workspace and start chatting in seconds.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

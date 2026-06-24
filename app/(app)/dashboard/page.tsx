@@ -92,12 +92,12 @@ curl ${apiUrl}/api/history/${tenantId}/DM/recipient_user_id \\
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <div ref={cardRef} className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+      <div ref={cardRef} className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Project Settings</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">Project Settings</h1>
             <p className="text-sm text-zinc-400 mt-1">Connect your app to Yappa</p>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium">
@@ -107,7 +107,7 @@ curl ${apiUrl}/api/history/${tenantId}/DM/recipient_user_id \\
         </div>
 
         {/* Configuration Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div className="glass rounded-xl p-5">
             <div className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-2">Project URL</div>
             <div className="flex items-center gap-2">
@@ -218,12 +218,12 @@ curl ${apiUrl}/api/history/${tenantId}/DM/recipient_user_id \\
         </div>
 
         {/* API Endpoints */}
-        <div className="glass rounded-xl p-5">
+        <div className="glass rounded-xl p-4 sm:p-5 overflow-hidden">
           <div className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-4">API Endpoints</div>
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-x-auto">
             {endpoints.map((ep, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+              <div key={i} className="flex items-center gap-3 py-2 min-w-0">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium shrink-0 ${
                   ep.method === "GET" ? "bg-blue-500/20 text-blue-400" :
                   ep.method === "POST" ? "bg-emerald-500/20 text-emerald-400" :
                   ep.method === "WS" ? "bg-purple-500/20 text-purple-400" :
@@ -231,8 +231,8 @@ curl ${apiUrl}/api/history/${tenantId}/DM/recipient_user_id \\
                 }`}>
                   {ep.method}
                 </span>
-                <code className="text-sm font-mono">{ep.path}</code>
-                <span className="text-xs text-zinc-500 ml-auto">{ep.name}</span>
+                <code className="text-xs sm:text-sm font-mono truncate">{ep.path}</code>
+                <span className="text-xs text-zinc-500 ml-auto shrink-0 hidden sm:inline">{ep.name}</span>
               </div>
             ))}
           </div>
@@ -256,13 +256,13 @@ curl ${apiUrl}/api/history/${tenantId}/DM/recipient_user_id \\
               ))}
             </div>
           </div>
-          <pre className="p-4 text-xs font-mono overflow-x-auto bg-surface-200 text-zinc-300">
+          <pre className="p-3 sm:p-4 text-[11px] sm:text-xs font-mono overflow-x-auto bg-surface-200 text-zinc-300">
             {codeExamples.javascript}
           </pre>
         </div>
 
         {/* Info */}
-        <div className="glass rounded-xl p-5">
+        <div className="glass rounded-xl p-4 sm:p-5">
           <h3 className="text-sm font-medium mb-3">Quick Start</h3>
           <ol className="space-y-2 text-sm text-zinc-400">
             <li className="flex gap-2">

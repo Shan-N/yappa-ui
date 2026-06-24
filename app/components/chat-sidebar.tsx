@@ -47,7 +47,7 @@ export default function ChatSidebar({
   }
 
   return (
-    <aside className="w-64 lg:w-72 h-full flex flex-col border-r border-border-subtle bg-surface-50/50">
+    <aside className="w-full md:w-64 lg:w-72 h-full flex flex-col border-r border-border-subtle bg-surface-0 md:bg-surface-50/50">
       {/* Workspace header */}
       <div className="p-4 border-b border-border-subtle">
         <div className="flex items-center justify-between mb-1">

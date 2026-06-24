@@ -54,8 +54,8 @@ export default function ChatMessages({
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-        <div className="h-16 w-16 rounded-2xl bg-surface-200 flex items-center justify-center mb-4">
+      <div className="flex-1 flex flex-col items-center justify-center text-center p-4 sm:p-8">
+        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl sm:rounded-2xl bg-surface-200 flex items-center justify-center mb-3 sm:mb-4">
           {channelType === "group" ? (
             <span className="text-2xl text-zinc-500">#</span>
           ) : (
@@ -72,10 +72,10 @@ export default function ChatMessages({
             </svg>
           )}
         </div>
-        <h3 className="text-base font-semibold mb-1">
+        <h3 className="text-sm sm:text-base font-semibold mb-1">
           {channelType === "group" ? `#${channelName}` : channelName}
         </h3>
-        <p className="text-sm text-zinc-500 max-w-xs">
+        <p className="text-xs sm:text-sm text-zinc-500 max-w-xs">
           {channelType === "group"
             ? "This is the start of this channel. Send a message to get things going!"
             : "This is the start of your conversation. Say hello!"}
@@ -85,7 +85,7 @@ export default function ChatMessages({
   }
 
   return (
-    <div ref={scrollRef} className="flex-1 chat-scroll p-5 space-y-4">
+    <div ref={scrollRef} className="flex-1 chat-scroll p-3 sm:p-5 space-y-3 sm:space-y-4">
       {messages.map((msg) => {
         const isMe = msg.senderId === currentUserId;
         const isSystem = msg.type === "group_join" || msg.type === "group_leave";

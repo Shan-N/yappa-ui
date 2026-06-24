@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -18,6 +18,7 @@ export default function LandingPage() {
   const gridRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -184,7 +185,7 @@ export default function LandingPage() {
       {/* ── Navigation ── */}
       <nav
         ref={navRef}
-        className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5"
+        className="relative z-10 flex items-center justify-between px-4 sm:px-6 md:px-12 py-4 sm:py-5"
       >
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-lg gradient-brand flex items-center justify-center">
@@ -203,7 +204,9 @@ export default function LandingPage() {
           </div>
           <span className="text-lg font-bold tracking-tight">Yappa</span>
         </div>
-        <div className="flex items-center gap-3">
+
+        {/* Desktop nav */}
+        <div className="hidden sm:flex items-center gap-3">
           <Link
             href="/docs"
             className="text-sm font-medium text-zinc-400 hover:text-white transition-colors px-4 py-2"
@@ -223,7 +226,54 @@ export default function LandingPage() {
             Get Started
           </Link>
         </div>
+
+        {/* Mobile nav toggle */}
+        <button
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          className="sm:hidden p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+          aria-label="Toggle navigation"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            {mobileNavOpen ? (
+              <path d="M18 6L6 18M6 6l12 12" />
+            ) : (
+              <>
+                <line x1="4" y1="8" x2="20" y2="8" />
+                <line x1="4" y1="16" x2="20" y2="16" />
+              </>
+            )}
+          </svg>
+        </button>
       </nav>
+
+      {/* Mobile nav dropdown */}
+      {mobileNavOpen && (
+        <div className="relative z-20 sm:hidden mx-4 mb-2 glass rounded-xl animate-fadeIn">
+          <div className="p-2 space-y-1">
+            <Link
+              href="/docs"
+              onClick={() => setMobileNavOpen(false)}
+              className="block text-sm text-zinc-300 hover:text-white px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            >
+              Docs
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setMobileNavOpen(false)}
+              className="block text-sm text-zinc-300 hover:text-white px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/create-workspace"
+              onClick={() => setMobileNavOpen(false)}
+              className="block text-sm text-center font-medium gradient-brand text-white px-4 py-3 rounded-lg transition-all"
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ── Hero Section ── */}
       <section className="relative z-10 flex flex-col items-center justify-center px-6 pt-20 md:pt-32 pb-20">
@@ -239,7 +289,7 @@ export default function LandingPage() {
         {/* Heading with word-by-word animation */}
         <h1
           ref={headingRef}
-          className="text-center text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6 overflow-hidden"
+          className="text-center text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-4 sm:mb-6 overflow-hidden"
           style={{ perspective: "800px" }}
         >
           {headingWords.map((word, i) => (
@@ -262,7 +312,7 @@ export default function LandingPage() {
         {/* Subtext */}
         <p
           ref={subRef}
-          className="text-center text-lg md:text-xl text-zinc-400 max-w-2xl mb-10 leading-relaxed"
+          className="text-center text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mb-8 sm:mb-10 leading-relaxed px-4 sm:px-0"
         >
           Secure, self-hosted messaging with workspaces, groups, and direct
           messages. Set up in minutes, deploy on your infrastructure.
@@ -272,7 +322,7 @@ export default function LandingPage() {
         <div ref={ctaRef} className="flex flex-col sm:flex-row items-center gap-4">
           <Link
             href="/create-workspace"
-            className="group relative inline-flex items-center gap-2.5 gradient-brand text-white font-semibold px-8 py-4 rounded-2xl text-lg shadow-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
+            className="group relative inline-flex items-center gap-2.5 gradient-brand text-white font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-lg shadow-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
           >
             Create Workspace
             <svg
@@ -290,7 +340,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 glass text-zinc-300 hover:text-white font-medium px-8 py-4 rounded-2xl text-lg transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 glass text-zinc-300 hover:text-white font-medium px-6 py-3 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-lg transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <svg
               width="18"
@@ -311,7 +361,7 @@ export default function LandingPage() {
       {/* ── Features Section ── */}
       <section
         ref={featuresRef}
-        className="relative z-10 px-6 md:px-12 pb-32 max-w-6xl mx-auto"
+        className="relative z-10 px-4 sm:px-6 md:px-12 pb-20 sm:pb-32 max-w-6xl mx-auto"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
@@ -365,8 +415,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-border-subtle px-6 py-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-zinc-500">
+      <footer className="relative z-10 border-t border-border-subtle px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-zinc-500">
           <span>© 2026 Yappa</span>
           <span>Self-hosted real-time messaging</span>
         </div>

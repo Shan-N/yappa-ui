@@ -208,7 +208,13 @@ body {
 
 /* ── Chat-specific ── */
 .message-bubble {
-  max-width: 75%;
+  max-width: 85%;
+}
+
+@media (min-width: 640px) {
+  .message-bubble {
+    max-width: 75%;
+  }
 }
 
 .chat-scroll {

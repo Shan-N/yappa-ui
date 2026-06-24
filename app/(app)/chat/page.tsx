@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { useAuth } from "@/app/components/auth-provider";
 import { useWS } from "@/app/components/ws-provider";
@@ -22,6 +22,10 @@ export default function ChatPage() {
     id: string;
   } | null>(null);
   const [showInvite, setShowInvite] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on channel selection (mobile)
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -103,11 +107,13 @@ export default function ChatPage() {
   function handleSelectGroup(groupId: string) {
     setActiveChannel({ type: "group", id: groupId });
     loadHistory("GROUP", groupId);
+    closeSidebar();
   }
 
   function handleSelectDM(userId: string) {
     setActiveChannel({ type: "dm", id: userId });
     loadHistory("DM", userId);
+    closeSidebar();
   }
 
   function getChannelDisplayName(): string {
@@ -126,9 +132,21 @@ export default function ChatPage() {
   }
 
   return (
-    <div ref={mainRef} className="flex flex-1 overflow-hidden">
-      {/* Sidebar */}
-      <div className="chat-panel">
+    <div ref={mainRef} className="flex flex-1 overflow-hidden relative">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 top-[3.25rem] bg-black/50 backdrop-blur-sm z-30 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Sidebar — hidden on mobile unless toggled */}
+      <div
+        className={`mobile-sidebar chat-panel fixed top-[3.25rem] bottom-0 left-0 z-40 w-72 transform transition-transform duration-300 ease-out md:relative md:top-auto md:bottom-auto md:translate-x-0 md:z-auto ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <ChatSidebar
           users={tenantInfo.users}
           groups={groups}
@@ -149,8 +167,20 @@ export default function ChatPage() {
         {activeChannel ? (
           <>
             {/* Channel header */}
-            <div className="h-13 flex items-center justify-between px-5 border-b border-border-subtle shrink-0">
+            <div className="h-13 flex items-center justify-between px-3 sm:px-5 border-b border-border-subtle shrink-0">
               <div className="flex items-center gap-2">
+                {/* Mobile hamburger / back button */}
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="md:hidden p-1.5 -ml-1 rounded-lg hover:bg-white/5 transition-colors"
+                  aria-label="Open sidebar"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </svg>
+                </button>
                 {activeChannel.type === "group" ? (
                   <span className="text-zinc-500 text-lg">#</span>
                 ) : (
@@ -208,24 +238,36 @@ export default function ChatPage() {
           </>
         ) : (
           // No channel selected
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-            <div className="h-20 w-20 rounded-3xl bg-surface-200 flex items-center justify-center mb-6">
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-6 sm:p-8">
+            {/* Mobile: show sidebar toggle button when no channel selected */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden mb-6 p-3 rounded-2xl bg-surface-200 hover:bg-surface-300 transition-colors"
+              aria-label="Open sidebar"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-surface-200 flex items-center justify-center mb-4 sm:mb-6">
               <svg
-                width="36"
-                height="36"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
-                className="text-zinc-500"
+                className="text-zinc-500 sm:w-9 sm:h-9"
               >
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold mb-2">
+            <h2 className="text-base sm:text-lg font-semibold mb-2">
               Welcome to {tenantInfo.name}
             </h2>
-            <p className="text-sm text-zinc-500 max-w-sm">
+            <p className="text-xs sm:text-sm text-zinc-500 max-w-sm">
               Select a channel or team member from the sidebar to start
               chatting.
             </p>
