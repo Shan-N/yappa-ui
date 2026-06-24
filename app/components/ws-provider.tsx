@@ -197,7 +197,23 @@ export function WSProvider({ children }: { children: ReactNode }) {
   const loadHistory = useCallback(async (channelType: "DM" | "GROUP", channelId: string) => {
     if (!accessToken || !user) return;
     try {
-      const history = await getChannelHistory(user.tenant_id, channelType, channelId, accessToken);
+      let history: ChatMessageFromAPI[];
+
+      if (channelType === "DM") {
+        // DMs are stored with channel_id = recipient, so we need both directions:
+        //   1. channel_id = otherUser  →  messages I sent to them
+        //   2. channel_id = myUserId   →  messages they sent to me
+        const [sent, received] = await Promise.all([
+          getChannelHistory(user.tenant_id, "DM", channelId, accessToken),
+          getChannelHistory(user.tenant_id, "DM", user.user_id, accessToken),
+        ]);
+        // Filter received to only messages from this specific conversation partner
+        const relevantReceived = received.filter((m) => m.sender_id === channelId);
+        history = [...sent, ...relevantReceived];
+      } else {
+        history = await getChannelHistory(user.tenant_id, channelType, channelId, accessToken);
+      }
+
       setMessages((prev) => {
         const merged = [...prev];
         for (const msg of history) {
@@ -205,7 +221,6 @@ export function WSProvider({ children }: { children: ReactNode }) {
             merged.push(toMessage(msg));
           }
         }
-        console.log(merged);
         return merged.sort((a, b) => a.timestamp - b.timestamp);
       });
     } catch (e) {
