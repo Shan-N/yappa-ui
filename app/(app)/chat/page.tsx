@@ -101,12 +101,12 @@ export default function ChatPage() {
 
   function handleSelectGroup(groupId: string) {
     setActiveChannel({ type: "group", id: groupId });
-    loadHistory("Group", groupId);
+    loadHistory("GROUP", groupId);
   }
 
   function handleSelectDM(userId: string) {
     setActiveChannel({ type: "dm", id: userId });
-    loadHistory("Dm", userId);
+    loadHistory("DM", userId);
   }
 
   function getChannelDisplayName(): string {

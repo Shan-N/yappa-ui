@@ -25,7 +25,7 @@ interface WSContextType {
   createGroup: (groupId: string) => void;
   deleteGroup: (groupId: string) => void;
   clearMessages: () => void;
-  loadHistory: (channelType: "Dm" | "Group", channelId: string) => Promise<void>;
+  loadHistory: (channelType: "DM" | "GROUP", channelId: string) => Promise<void>;
 }
 
 const WSContext = createContext<WSContextType | null>(null);
@@ -142,7 +142,7 @@ export function WSProvider({ children }: { children: ReactNode }) {
     setMessages([]);
   }, []);
 
-  const loadHistory = useCallback(async (channelType: "Dm" | "Group", channelId: string) => {
+  const loadHistory = useCallback(async (channelType: "DM" | "GROUP", channelId: string) => {
     if (!accessToken || !user) return;
     try {
       const history = await getChannelHistory(user.tenant_id, channelType, channelId, accessToken);

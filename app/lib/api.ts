@@ -114,13 +114,15 @@ export async function getTenantInfo(
 
 export async function getChannelHistory(
   tenantId: string,
-  channelType: "Dm" | "Group",
+  channelType: "DM" | "GROUP",
   channelId: string,
   token: string,
   limit: number = 50
 ): Promise<ChatMessageFromAPI[]> {
+  // Backend route uses "Dm" / "Group" casing
+  const pathType = channelType === "DM" ? "Dm" : "Group";
   return request<ChatMessageFromAPI[]>(
-    `/api/history/${tenantId}/${channelType}/${encodeURIComponent(channelId)}?limit=${limit}`,
+    `/api/history/${tenantId}/${pathType}/${encodeURIComponent(channelId)}?limit=${limit}`,
     {
       headers: authHeader(token),
     }
