@@ -119,10 +119,8 @@ export async function getChannelHistory(
   token: string,
   limit: number = 50
 ): Promise<ChatMessageFromAPI[]> {
-  // Backend route uses "Dm" / "Group" casing
-  const pathType = channelType === "DM" ? "Dm" : "Group";
   return request<ChatMessageFromAPI[]>(
-    `/api/history/${tenantId}/${pathType}/${encodeURIComponent(channelId)}?limit=${limit}`,
+    `/api/history/${tenantId}/${channelType}/${encodeURIComponent(channelId)}?limit=${limit}`,
     {
       headers: authHeader(token),
     }
