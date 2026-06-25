@@ -101,7 +101,6 @@ export default function ChatPage() {
 
   function handleCreateGroup(groupId: string) {
     createGroup(groupId);
-    joinGroup(groupId);
     setActiveChannel({ type: "group", id: groupId });
   }
 

@@ -56,14 +56,96 @@ export function WSProvider({ children }: { children: ReactNode }) {
   const { accessToken, user, isAuthenticated } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [groups, setGroups] = useState<string[]>(["general"]);
+  const [groups, setGroups] = useState<string[]>(() => {
+    // Restore groups from localStorage on initial render
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("yappa_groups");
+        if (stored) {
+          const parsed = JSON.parse(stored) as string[];
+          // Always ensure "general" is included
+          if (!parsed.includes("general")) parsed.unshift("general");
+          return parsed;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return ["general"];
+  });
   const wsRef = useRef<RealtimeWS | null>(null);
+  const joinedGroupsRef = useRef<Set<string>>(new Set());
+
+  // Persist groups to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== "undefined" && groups.length > 0) {
+      localStorage.setItem("yappa_groups", JSON.stringify(groups));
+    }
+  }, [groups]);
+
+  // Discover groups from message history on login
+  useEffect(() => {
+    if (!isAuthenticated || !accessToken || !user) return;
+
+    async function discoverGroups() {
+      try {
+        // Fetch history for all known groups to discover any we might have missed
+        const knownGroups = new Set<string>(["general"]);
+
+        // Try to restore from localStorage first
+        try {
+          const stored = localStorage.getItem("yappa_groups");
+          if (stored) {
+            const parsed = JSON.parse(stored) as string[];
+            parsed.forEach((g) => knownGroups.add(g));
+          }
+        } catch {
+          // ignore
+        }
+
+        // For each known group, try to fetch its history to validate it exists
+        // and discover any groups referenced in those messages
+        const historyPromises = Array.from(knownGroups).map((groupId) =>
+          getChannelHistory(user!.tenant_id, "GROUP", groupId, accessToken!, 5).catch(
+            () => [] as ChatMessageFromAPI[]
+          )
+        );
+
+        const results = await Promise.all(historyPromises);
+        for (const history of results) {
+          for (const msg of history) {
+            if (msg.channel_id) {
+              knownGroups.add(msg.channel_id);
+            }
+          }
+        }
+
+        setGroups((prev) => {
+          const merged = new Set<string>(prev);
+          knownGroups.forEach((g) => merged.add(g));
+          // Always keep general first
+          const arr = Array.from(merged);
+          const generalIdx = arr.indexOf("general");
+          if (generalIdx > 0) {
+            arr.splice(generalIdx, 1);
+            arr.unshift("general");
+          }
+          return arr;
+        });
+      } catch {
+        // silently fail, we at least have "general"
+      }
+    }
+
+    discoverGroups();
+  }, [isAuthenticated, accessToken, user]);
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken || !user) {
       wsRef.current?.disconnect();
       wsRef.current = null;
       setIsConnected(false);
+      joinedGroupsRef.current.clear();
       return;
     }
 
@@ -79,20 +161,42 @@ export function WSProvider({ children }: { children: ReactNode }) {
 
     ws.on("connected", () => {
       setIsConnected(true);
-      // Auto-join general on connect
-      ws.joinGroup("general");
+      joinedGroupsRef.current.clear();
+      // Auto-join all known groups on connect so we receive their messages
+      // Read the latest groups from localStorage to ensure we don't miss any
+      const groupsToJoin = new Set<string>(["general"]);
+      try {
+        const stored = localStorage.getItem("yappa_groups");
+        if (stored) {
+          const parsed = JSON.parse(stored) as string[];
+          parsed.forEach((g) => groupsToJoin.add(g));
+        }
+      } catch {
+        // ignore
+      }
+      groupsToJoin.forEach((groupId) => {
+        ws.joinGroup(groupId);
+        joinedGroupsRef.current.add(groupId);
+      });
     });
     ws.on("disconnected", () => setIsConnected(false));
     ws.on("message", (data) => {
       const msg = data as WSIncomingMessage;
       
-      // Handle group_created events
+      // Handle group_created / group_join events — add to sidebar for everyone
       if (msg.type === "group_created" || msg.type === "group_join") {
         const groupId = msg.channel_id;
         setGroups((prev) => {
           if (prev.includes(groupId)) return prev;
           return [...prev, groupId];
         });
+        
+        // Only auto-join if we haven't joined during this connection session
+        // to prevent infinite JOIN -> group_join -> JOIN loops
+        if (!joinedGroupsRef.current.has(groupId)) {
+          ws.joinGroup(groupId);
+          joinedGroupsRef.current.add(groupId);
+        }
       }
       
       setMessages((prev) => {
@@ -123,8 +227,6 @@ export function WSProvider({ children }: { children: ReactNode }) {
     });
 
     ws.connect();
-    // Auto-join general group
-    ws.joinGroup("general");
     wsRef.current = ws;
 
     return () => {
@@ -184,6 +286,13 @@ export function WSProvider({ children }: { children: ReactNode }) {
 
   const createGroup = useCallback((groupId: string) => {
     wsRef.current?.createGroup(groupId);
+    // Optimistically add the group to the list immediately
+    setGroups((prev) => {
+      if (prev.includes(groupId)) return prev;
+      return [...prev, groupId];
+    });
+    // Also join the group so we receive messages
+    wsRef.current?.joinGroup(groupId);
   }, []);
 
   const deleteGroup = useCallback((groupId: string) => {
