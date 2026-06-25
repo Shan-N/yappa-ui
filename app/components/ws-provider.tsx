@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { RealtimeWS } from "@/app/lib/ws-client";
-import { getChannelHistory } from "@/app/lib/api";
+import { getChannelHistory, getGroupsList } from "@/app/lib/api";
 import type { ChatMessage, WSIncomingMessage, ChatMessageFromAPI } from "@/app/lib/types";
 import { useAuth } from "./auth-provider";
 
@@ -96,29 +96,18 @@ export function WSProvider({ children }: { children: ReactNode }) {
         try {
           const stored = localStorage.getItem("yappa_groups");
           if (stored) {
-            const parsed = JSON.parse(stored) as string[];
-            parsed.forEach((g) => knownGroups.add(g));
+            const parsed = JSON.parse(stored) as any[];
+            parsed.forEach((g) => {
+              if (typeof g === "string") knownGroups.add(g);
+            });
           }
         } catch {
           // ignore
         }
 
-        // For each known group, try to fetch its history to validate it exists
-        // and discover any groups referenced in those messages
-        const historyPromises = Array.from(knownGroups).map((groupId) =>
-          getChannelHistory(user!.tenant_id, "GROUP", groupId, accessToken!, 5).catch(
-            () => [] as ChatMessageFromAPI[]
-          )
-        );
-
-        const results = await Promise.all(historyPromises);
-        for (const history of results) {
-          for (const msg of history) {
-            if (msg.channel_id) {
-              knownGroups.add(msg.channel_id);
-            }
-          }
-        }
+        // Fetch the definitive list of groups from the backend
+        const serverGroups = await getGroupsList(user!.tenant_id, accessToken!);
+        serverGroups.forEach((g) => knownGroups.add(g));
 
         setGroups((prev) => {
           const merged = new Set<string>(prev);
@@ -168,8 +157,10 @@ export function WSProvider({ children }: { children: ReactNode }) {
       try {
         const stored = localStorage.getItem("yappa_groups");
         if (stored) {
-          const parsed = JSON.parse(stored) as string[];
-          parsed.forEach((g) => groupsToJoin.add(g));
+          const parsed = JSON.parse(stored) as any[];
+          parsed.forEach((g) => {
+            if (typeof g === "string") groupsToJoin.add(g);
+          });
         }
       } catch {
         // ignore

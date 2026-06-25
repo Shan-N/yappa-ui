@@ -128,33 +128,21 @@ export async function getChannelHistory(
 }
 
 /**
- * Discover all groups that exist for a tenant by fetching group history
- * for a well-known channel ("general") and also checking for other groups
- * by listing messages. Since the backend has no dedicated groups endpoint,
- * we rely on the "general" group always existing plus real-time discovery.
+ * Fetch all groups that exist for a tenant using the dedicated groups endpoint.
+ * Always ensures "general" is included as the default group.
  */
 export async function getGroupsList(
   tenantId: string,
   token: string
 ): Promise<string[]> {
   try {
-    // Try fetching history for "general" - if it works, at least "general" exists
-    // We also try a broader approach: fetch all Group-type history
-    const history = await request<ChatMessageFromAPI[]>(
-      `/api/history/${tenantId}/Group/general?limit=1`,
-      { headers: authHeader(token) }
-    ).catch(() => [] as ChatMessageFromAPI[]);
+    const rawGroups = await request<any[]>(`/api/groups/${encodeURIComponent(tenantId)}`, {
+      headers: authHeader(token),
+    });
 
-    const groups = new Set<string>(["general"]);
-
-    // Extract any group IDs from the messages
-    for (const msg of history) {
-      if (msg.channel_id) {
-        groups.add(msg.channel_id);
-      }
-    }
-
-    return Array.from(groups);
+    const groupNames = rawGroups.map(g => g.name);
+    const groupSet = new Set<string>(["general", ...groupNames]);
+    return Array.from(groupSet);
   } catch {
     return ["general"];
   }
