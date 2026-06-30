@@ -1,360 +1,540 @@
-/* ── Custom Selection ── */
-.docs-page ::selection {
-  background: #ffffff;
-  color: #000000;
+/* docs.css — styles for the Yappa SDK docs page */
+
+.docs-page {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #171717;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --accent: #ffffff;
+  --accent-hover: #d4d4d8;
+  --success: #d4d4d8;
+  --warning: #d4d4d8;
+  --error: #d4d4d8;
+  --border: #262626;
+  --code-bg: #0a0a0a;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+.docs-page * {
+  box-sizing: border-box;
 }
 
 .docs-page a {
-  color: #fafafa;
+  color: var(--accent);
   text-decoration: none;
-  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-bottom: 1px solid transparent;
+  transition: color 0.2s;
 }
 
-.docs-page .main a:hover {
-  border-bottom: 1px solid #fafafa;
+.docs-page a:hover {
+  color: var(--accent-hover);
 }
 
-.docs-page .container {
+.docs-page a:focus-visible,
+.docs-page button:focus-visible,
+.docs-page .nav-link:focus-visible {
+  outline: 1px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+.docs-container {
   display: flex;
   min-height: 100vh;
-  background: var(--background);
 }
 
-/* ── Sidebar ── */
-.docs-page .sidebar {
-  width: 300px;
-  background: var(--background);
-  border-right: 1px solid var(--color-border-default);
+/* Sidebar */
+
+.sidebar {
+  width: 280px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
   position: fixed;
+  top: 0;
+  left: 0;
   height: 100vh;
   overflow-y: auto;
   z-index: 100;
-  padding-top: 24px;
 }
 
-.docs-page .sidebar-header {
-  padding: 0 32px 32px;
+.sidebar-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
 }
 
-.docs-page .logo {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--foreground);
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.docs-page .logo-icon {
-  width: 24px;
-  height: 24px;
-  background: #ffffff;
-  border-radius: 4px;
-}
-
-.docs-page .sidebar-nav {
-  padding: 0 16px 32px;
-}
-
-.docs-page .nav-section {
-  margin-bottom: 24px;
-}
-
-.docs-page .nav-section-title {
-  padding: 8px 16px;
-  font-size: 10px;
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  padding: 16px 0;
+}
+
+.nav-section {
+  margin-bottom: 8px;
+}
+
+.nav-section-title {
+  padding: 8px 24px;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #52525b;
+  letter-spacing: 1px;
+  color: var(--text-muted);
 }
 
-.docs-page .nav-link {
+.nav-link {
   display: block;
-  padding: 8px 16px;
-  color: #a1a1aa;
+  padding: 8px 24px;
+  color: var(--text-secondary);
   font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  cursor: pointer;
 }
 
-.docs-page .nav-link:hover {
-  background: var(--color-surface-100);
-  color: var(--foreground);
-  transform: translateX(4px);
+.nav-link:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
-.docs-page .nav-link.active {
-  background: var(--foreground);
-  color: var(--background);
+.nav-link.active {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-left-color: var(--text-primary);
 }
 
-/* ── Main Content ── */
-.docs-page .main {
+/* Main content */
+
+.main {
   flex: 1;
-  margin-left: 300px;
-  padding: 80px 100px;
-  max-width: 1000px;
+  margin-left: 280px;
+  padding: 48px 80px 120px;
+  max-width: 900px;
 }
 
-.docs-page .page-title {
-  font-size: 56px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  margin-bottom: 24px;
-  color: #ffffff;
+.hero-header {
+  margin-bottom: 48px;
 }
 
-.docs-page .page-subtitle {
-  font-size: 20px;
-  color: #a1a1aa;
-  margin-bottom: 80px;
-  font-weight: 400;
-  max-width: 600px;
-}
-
-.docs-page .section {
-  margin-bottom: 100px;
-  opacity: 0; /* For GSAP */
-  transform: translateY(40px);
-}
-
-.docs-page .section-title {
-  font-size: 32px;
+.page-title {
+  font-size: 42px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-border-default);
-  color: #ffffff;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.page-subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.section {
+  margin-bottom: 56px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
 }
 
 .docs-page h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 48px 0 16px;
+  margin: 32px 0 12px;
+  color: var(--text-primary);
 }
 
 .docs-page h4 {
   font-size: 16px;
   font-weight: 600;
-  margin: 32px 0 12px;
-  color: var(--foreground);
+  margin: 24px 0 8px;
+  color: var(--text-secondary);
 }
 
 .docs-page p {
-  color: #a1a1aa;
-  margin-bottom: 24px;
-  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
 }
 
-/* ── Code Blocks ── */
+/* Code blocks */
+
 .docs-page pre {
-  background: var(--color-surface-50);
-  border: 1px solid var(--color-border-default);
-  border-radius: 12px;
-  padding: 24px;
-  margin: 24px 0;
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
   overflow-x: auto;
-  position: relative;
+  border: 1px solid var(--border);
 }
 
 .docs-page code {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.docs-page pre code {
-  color: #e4e4e7;
-}
-
-.docs-page code:not(pre code) {
-  background: var(--color-surface-100);
-  border: 1px solid var(--color-border-default);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #ffffff;
-}
-
-.docs-page .keyword { color: #ffffff; font-weight: 600; }
-.docs-page .string { color: #a1a1aa; }
-.docs-page .comment { color: #52525b; font-style: italic; }
-.docs-page .function { color: #ffffff; }
-.docs-page .number { color: #d4d4d8; }
-.docs-page .type { color: #ffffff; font-weight: 600; }
-.docs-page .property { color: #e4e4e7; }
-
-/* ── Tables ── */
-.docs-page table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 24px 0;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
   font-size: 14px;
 }
 
-.docs-page th, .docs-page td {
-  padding: 16px;
+.docs-page pre code {
+  color: var(--text-primary);
+}
+
+.docs-page code:not(pre code) {
+  background: var(--bg-tertiary);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+/* Syntax token hierarchy — distinguished by weight/style/shade since
+   there's no hue to lean on in a monochrome theme. */
+
+.keyword {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.type {
+  color: #ffffff;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.function {
+  color: #e5e5e5;
+  font-weight: 500;
+}
+
+.property {
+  color: #c4c4c8;
+}
+
+.string {
+  color: #a3a3a3;
+}
+
+.number {
+  color: #a3a3a3;
+}
+
+.comment {
+  color: #6b6b6b;
+  font-style: italic;
+}
+
+/* Tables */
+
+.docs-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.docs-page th,
+.docs-page td {
+  padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border-default);
+  border-bottom: 1px solid var(--border);
 }
 
 .docs-page th {
+  background: var(--bg-tertiary);
   font-weight: 600;
-  color: #ffffff;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  color: var(--text-primary);
 }
 
 .docs-page td {
-  color: #a1a1aa;
+  color: var(--text-secondary);
 }
 
 .docs-page tr:hover td {
-  background: var(--color-surface-0);
+  background: var(--bg-tertiary);
 }
 
-/* ── Cards ── */
-.docs-page .card-grid {
+/* Cards */
+
+.card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin: 32px 0;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
 }
 
-.docs-page .card {
-  background: var(--background);
-  border: 1px solid var(--color-border-default);
-  border-radius: 16px;
-  padding: 32px;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s;
 }
 
-.docs-page .card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #ffffff;
-  opacity: 0;
-  transition: opacity 0.5s;
-  z-index: 0;
+.card:hover {
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
 }
 
-.docs-page .card:hover {
-  border-color: #ffffff;
-  transform: translateY(-4px);
-}
-
-.docs-page .card:hover::before {
-  opacity: 0.03;
-}
-
-.docs-page .card-title {
-  font-size: 20px;
+.card-title {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
-  color: #ffffff;
+  margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
-.docs-page .card-desc {
-  font-size: 15px;
-  color: #a1a1aa;
-  position: relative;
-  z-index: 1;
+.card-desc {
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-/* ── Badges ── */
-.docs-page .badge {
-  display: inline-flex;
-  align-items: center;
+/* Badges — each level reads as a distinct weight/fill rather than a
+   distinct hue, so "required" still outranks "optional" at a glance. */
+
+.badge {
+  display: inline-block;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 11px;
-  font-weight: 600;
-  margin-right: 8px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--color-border-default);
+  margin-left: 8px;
+  line-height: 1.4;
 }
 
-.docs-page .badge-green, 
-.docs-page .badge-blue, 
-.docs-page .badge-orange, 
-.docs-page .badge-red {
-  background: var(--background);
-  color: #ffffff;
-  border-color: #ffffff;
+/* required — solid fill, highest visual weight */
+.badge-red {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: 1px solid var(--text-primary);
 }
 
-/* ── Flows ── */
-.docs-page .flow-box {
-  border-left: 1px solid var(--color-border-default);
-  margin: 32px 0 32px 24px;
-  padding-left: 32px;
+/* recommended — outlined in full white, stands out without filling */
+.badge-green {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
 }
 
-.docs-page .flow-step {
-  margin-bottom: 32px;
-  position: relative;
-}
-
-.docs-page .flow-step::before {
-  content: '';
-  position: absolute;
-  left: -37px;
-  top: 6px;
-  width: 9px;
-  height: 9px;
-  background: #ffffff;
-  border-radius: 50%;
-}
-
-.docs-page .flow-title {
+/* default — quiet filled chip, lowest visual weight */
+.badge-blue {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   font-weight: 600;
-  color: var(--foreground);
-  margin-bottom: 8px;
-  font-size: 16px;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-.docs-page .flow-desc {
-  font-size: 15px;
-  color: #a1a1aa;
+/* optional — dashed outline, intentionally provisional-looking */
+.badge-orange {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px dashed var(--text-secondary);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-/* ── Architecture Diagram ── */
-.docs-page .architecture-diagram {
-  background: var(--color-surface-50);
-  border: 1px solid var(--color-border-default);
-  border-radius: 12px;
-  padding: 32px;
-  margin: 32px 0;
-  font-family: var(--font-mono);
+/* Feature list */
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.feature-list li {
+  padding: 8px 0 8px 28px;
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.feature-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+/* Flow boxes */
+
+.flow-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.flow-step:last-child {
+  margin-bottom: 0;
+}
+
+.flow-number {
+  width: 28px;
+  height: 28px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 13px;
-  line-height: 1.5;
-  color: #a1a1aa;
+  font-weight: 700;
+  color: var(--bg-primary);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.flow-content {
+  flex: 1;
+}
+
+.flow-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.flow-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Callout boxes — info / warning / error read as ascending severity
+   through border weight, border style, and background density rather
+   than color. */
+
+.info-box,
+.warning-box,
+.error-box {
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.info-box {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--text-secondary);
+}
+
+.warning-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px dashed var(--text-primary);
+}
+
+.error-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--text-primary);
+}
+
+.info-box strong,
+.warning-box strong,
+.error-box strong {
+  color: var(--text-primary);
+}
+
+/* Architecture diagram */
+
+.architecture-diagram {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 20px 0;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-secondary);
   overflow-x: auto;
   white-space: pre;
 }
 
+/* Footer */
+
+.docs-footer {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Responsive */
+
 @media (max-width: 1024px) {
-  .docs-page .sidebar { width: 260px; }
-  .docs-page .main { margin-left: 260px; padding: 60px 40px; }
+  .sidebar {
+    width: 240px;
+  }
+
+  .main {
+    margin-left: 240px;
+    padding: 32px 40px 100px;
+  }
 }
 
 @media (max-width: 768px) {
-  .docs-page .sidebar { display: none; }
-  .docs-page .main { margin-left: 0; padding: 40px 24px; }
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 24px;
+  }
+}
+
+.docs-page ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.docs-page ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.docs-page ::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.docs-page ::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
 }
