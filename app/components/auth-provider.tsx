@@ -133,7 +133,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore errors on logout
     }
+
+    if (typeof window !== "undefined") {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      }
+    }
+
     clearAuth();
+    
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   }, [clearAuth]);
 
   // Try silent refresh on mount (restore session from HTTP-only cookie)

@@ -150,7 +150,7 @@ export default function ChatPage() {
         <ChatSidebar
           users={tenantInfo.users}
           groups={groups}
-          currentUser={user}
+          currentUser={tenantInfo.users.find((u) => u.user_id === user.user_id) || user}
           activeChannel={activeChannel}
           onSelectDM={handleSelectDM}
           onSelectGroup={handleSelectGroup}
